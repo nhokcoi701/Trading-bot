@@ -1,0 +1,15 @@
+fastapi
+uvicorn[standard]
+psutil
+requests
+urllib3
+numpy
+pandas
+scipy
+scikit-learn
+joblib
+matplotlib
+seaborn
+cryptography
+python-binance
+python-telegram-bot

@@ -1,0 +1,405 @@
+{
+  "mode": "PAPER",
+  "modes": {
+    "demo": true,
+    "shadow": true,
+    "paper": true,
+    "live": false
+  },
+  "initial_equity": 1000.0,
+  "default_leverage": 15,
+  "base_risk_pct": 1.2,
+  "portfolio": {
+    "max_total_positions": 8,
+    "max_alt_positions": 6,
+    "max_entries_per_scan": 4,
+    "min_entry_spacing_s": 0.25,
+    "symbol_cooldown_s": 25,
+    "notes": "Big-size but anti-spam: limit simultaneous exposure and avoid stacking entries in same minute."
+  },
+  "futures": {
+    "margin_mode": "CROSS",
+    "entry_order_type": "MARKET",
+    "exit_order_type": "MARKET",
+    "max_margin_util": 0.965,
+    "per_position_margin_util": 0.8,
+    "min_notional_usdt": 25,
+    "max_notional_usdt": 999999999,
+    "notes": "Sizing scales with equity automatically: notional_budget ~= equity * leverage * max_margin_util. Per-position budget split by per_position_margin_util & max_total_positions."
+  },
+  "brackets": {
+    "min_stop_pct": 0.0045,
+    "stop_atr_mult": 1.6,
+    "tp_vs_sl_min_mult": 2.6,
+    "tp_swing_buffer_atr": 0.6,
+    "tp_breakout_ext_atr": 0.95,
+    "tp_near_swing_thr_atr": 0.3,
+    "trailing": {
+      "enabled": true,
+      "trail_start_rr": 1.25,
+      "trail_atr_mult": 0.9
+    },
+    "notes": "Wider SL to avoid noise. TP targets swing (hh20/ll20) + ATR buffers, with breakout extension when near swing.",
+    "max_stop_pct": 0.018,
+    "max_stop_pct_map": {
+      "BTCUSDT": 0.016,
+      "ETHUSDT": 0.018,
+      "SOLUSDT": 0.022,
+      "XRPUSDT": 0.024
+    },
+    "rr_min_map": {
+      "BTCUSDT": 1.25,
+      "ETHUSDT": 1.2,
+      "SOLUSDT": 1.15,
+      "XRPUSDT": 1.15
+    },
+    "rr_min": 1.2
+  },
+  "live_control": {
+    "enabled": false,
+    "notes": "KILL-SWITCH: ph\u1ea3i set enabled=true m\u1edbi g\u1eedi l\u1ec7nh LIVE. \u0110\u1ed3ng th\u1eddi modes.live ph\u1ea3i true."
+  },
+  "symbols": [
+    "BTCUSDT",
+    "ETHUSDT",
+    "SOLUSDT",
+    "XRPUSDT"
+  ],
+  "risk_limits": {
+    "max_daily_loss_pct": 5.0,
+    "max_weekly_loss_pct": 18.0,
+    "max_drawdown_pct": 35.0,
+    "max_loss_streak": 999,
+    "max_portfolio_heat": 85.0,
+    "risk_per_trade_pct_equity": 1.0,
+    "max_loss_per_trade_pct_equity": 1.6,
+    "cooldown_after_loss_s": 0,
+    "cooldown_after_2_losses_s": 0,
+    "notes": "Big-size mode: higher allowed heat but strict loss controls. Risk is %equity-based so it scales with deposits/withdrawals/PNL.",
+    "anti_churn": {
+      "enabled": true,
+      "fee_bps": 4.0,
+      "slippage_bps": 4.0,
+      "spread_bps_est": 2.0,
+      "latency_ms_est": 150.0,
+      "latency_ref_s": 60.0,
+      "min_edge_bps": 6.0,
+      "min_edge_over_cost": 1.85,
+      "min_risk_over_cost": 0.85,
+      "paper_relax": 0.9,
+      "relax_floor_paper": 0.6,
+      "slippage_bps_side_paper": 2.0,
+      "adaptive_state_path": "data/anti_churn_adapt.json"
+    },
+    "cluster_guard": {
+      "enabled": true,
+      "corr_threshold": 0.7,
+      "max_cluster_exposure_pct": 6.0,
+      "min_scale": 0.25
+    },
+    "danger_requires_dd_pct": 2.0,
+    "critical_requires_dd_pct": 4.0,
+    "max_consecutive_losses_for_danger": 999,
+    "danger_cooldown_sec": 0,
+    "ignore_losses_under_fee_mult": 2.0
+  },
+  "coin_profiles": {
+    "BTCUSDT": {
+      "role": "LEADER",
+      "volatility_rank": 1,
+      "risk_multiplier": 1.15,
+      "priority": 1,
+      "max_position_pct": 55.0,
+      "min_confidence": 0.43
+    },
+    "SOLUSDT": {
+      "role": "FOLLOWER",
+      "volatility_rank": 2,
+      "risk_multiplier": 1.0,
+      "priority": 2,
+      "max_position_pct": 35.0,
+      "min_confidence": 0.43000000000000005
+    },
+    "XRPUSDT": {
+      "role": "FOLLOWER",
+      "volatility_rank": 3,
+      "risk_multiplier": 1.0,
+      "priority": 3,
+      "max_position_pct": 35.0,
+      "min_confidence": 0.43000000000000005
+    },
+    "ETHUSDT": {
+      "role": "FOLLOWER",
+      "volatility_rank": 4,
+      "risk_multiplier": 1.0,
+      "priority": 4,
+      "max_position_pct": 35.0,
+      "min_confidence": 0.43000000000000005
+    }
+  },
+  "entry_quality": {
+    "min_confidence": 0.28,
+    "rr_min": 1.25,
+    "fee_positive": true,
+    "notes": "Still fee-positive; lowered min_confidence to avoid signal starvation."
+  },
+  "auto_mode_switching": {
+    "EXCELLENT": "ULTRA_AGGRESSIVE",
+    "NORMAL": "MAX",
+    "CAUTION": "SMART",
+    "DANGER": "DEFENSIVE",
+    "CRITICAL": "SURVIVAL"
+  },
+  "ml_settings": {
+    "enabled": true,
+    "retrain_after_trades": 12,
+    "min_training_samples": 20,
+    "persistent_brain": {
+      "enabled": true,
+      "auto_load_on_startup": true,
+      "save_interval_minutes": 10,
+      "backup_dir": "backups"
+    }
+  },
+  "self_evolve": {
+    "enabled": true,
+    "notes": "Deprecated: replaced by adaptive_engine.",
+    "policy_lr": 0.05,
+    "edge_lr": 0.08
+  },
+  "adaptive_engine": {
+    "enabled": true,
+    "learn_mode": "paper",
+    "rotate_minutes": 15,
+    "min_orders_for_ops": 10,
+    "rollback": {
+      "min_trades": 10,
+      "bad_expectancy": 0.0,
+      "max_reject_rate": 0.4,
+      "max_avg_slippage_pct": 0.006
+    },
+    "notes": "Auto-adaptive profiles (trend/range) with UCB selection + rollback. Applies runtime overrides only."
+  },
+  "telegram": {
+    "enabled": true,
+    "env": {
+      "bot_token": "TELEGRAM_BOT_TOKEN",
+      "chat_id": "TELEGRAM_CHAT_ID"
+    }
+  },
+  "logging": {
+    "level": "INFO",
+    "log_file": "trading_v2.log"
+  },
+  "backtesting": {
+    "enabled": true,
+    "initial_equity": 10000.0,
+    "commission": 0.0002,
+    "slippage": 0.0005,
+    "walk_forward": false,
+    "train_period_days": 90,
+    "test_period_days": 30
+  },
+  "notes": [
+    "Profit-max profile (PAPER by default): keep live kill-switch OFF until you explicitly enable.",
+    "Liquidity-sweep entries: seek wick reversals; SL behind wick+ATR; TP toward swing / extension.",
+    "Big-size scaling: sizing uses equity-based risk caps; leverage high but loss per trade is capped.",
+    "If you flip LIVE: enable live_control.enabled=true AND modes.live=true, then test with small equity first."
+  ],
+  "circuit_breakers": {
+    "max_consecutive_order_errors": 3,
+    "max_consecutive_reconcile_fail": 2,
+    "max_order_latency_ms": 2500,
+    "reconcile_every_seconds": 60,
+    "cooldown_seconds": 600,
+    "notes": "Live safety breaker: trips kill-switch on repeated order/reconcile failures or extreme latency.",
+    "telegram_disable_after_failures": 3,
+    "telegram_disable_seconds": 180
+  },
+  "microstructure": {
+    "max_spread_pct": 0.0035,
+    "max_mark_last_div_pct": 0.0045,
+    "max_abs_ret_5m": 0.02,
+    "symbol_cooldown_s": 15,
+    "notes": "Pre-trade guard for MARKET orders: block toxic spread/mark-last divergence/volatility shocks."
+  },
+  "governor": {
+    "enabled": true,
+    "max_leverage_cap": 25,
+    "min_leverage_cap": 5,
+    "dd_soft_pct": 0.075,
+    "dd_hard_pct": 0.14,
+    "loss_streak_soft": 3,
+    "loss_streak_hard": 5,
+    "vol_shock_scale": 0.62,
+    "notes": "Independent risk governor: clamps qty/leverage dynamically without mutating base config."
+  },
+  "pyramiding": {
+    "enabled": false,
+    "max_adds": 1,
+    "add_trigger_rr": 1.1,
+    "add_size_pct": 0.35,
+    "min_add_interval_s": 180,
+    "only_if_trend_strength_min": 0.0022
+  },
+  "metrics": {
+    "enabled": true,
+    "window_orders": 50,
+    "window_trades": 40,
+    "persist_every_seconds": 120,
+    "notes": "Runtime metrics stored to state_*.json and events_*.jsonl"
+  },
+  "alerts": {
+    "max_avg_slippage_pct": 0.0045,
+    "max_p95_latency_ms": 3500,
+    "max_reject_rate": 0.35,
+    "max_bad_streak": 2,
+    "notes": "If metrics degrade for consecutive windows, system auto-pauses LIVE via kill-switch"
+  },
+  "exit_engine": {
+    "tp1_rr": 1.2,
+    "tp1_close_pct": 0.35,
+    "breakeven_rr": 1.6,
+    "breakeven_buffer_mult": 1.4,
+    "trailing_start_rr": 1.45,
+    "trailing_pct": 0.0045,
+    "time_stop_minutes": 30,
+    "time_stop_min_rr": 0.25,
+    "min_close_profit_net_usdt": 2.0,
+    "notes": "Live-like exits: delay BE/trailing so trades can reach thicker TP; block fee-eaten closes.",
+    "early_cut_rr": -2.0,
+    "early_cut_close_pct": 0.35,
+    "early_cut_min_age_minutes": 25,
+    "runner_disable_hard_tp_after_tp1": true,
+    "trail_use_atr": true,
+    "trail_atr_mult": 1.1,
+    "trail_atr_mult_after_tp1": 1.35,
+    "loss_cap_remaining_r": 0.45,
+    "breakeven_buffer_r": 0.08,
+    "runner_mode": true,
+    "pyramiding": {
+      "enabled": false,
+      "max_adds": 1,
+      "start_rr": 0.9,
+      "step_rr": 1.0,
+      "add_qty_frac_of_initial": 0.35,
+      "min_age_minutes": 10,
+      "min_gap_seconds": 300
+    },
+    "regime": {
+      "time_stop_sideway_minutes": 15,
+      "time_stop_trend_minutes": 75,
+      "sideway_atr_ratio_max": 0.92,
+      "sideway_trend_abs_max": 0.0018
+    },
+    "reversal_rescue": {
+      "enabled": false,
+      "max_total_positions": 4,
+      "hedge_qty_frac": 0.22,
+      "trigger_rr": -0.55,
+      "min_age_minutes": 2.0,
+      "max_age_minutes": 25.0,
+      "opposite_signal_min_conf": 0.62,
+      "widen_old_sl_mult": 1.22,
+      "widen_old_sl_cap_pct": 0.012,
+      "scratch_close_fee_mult": 1.1,
+      "cooldown_seconds": 420,
+      "notes": "Controlled rescue: if BTC+1ALT both lose quickly and HTF flips, open up to 2 other ALTs opposite with small size; widen old SL slightly (capped); flatten all when net>=~ -cost.",
+      "scratch_all_strict": true,
+      "scratch_all_min_positions": 3,
+      "scratch_all_min_age_sec": 240,
+      "scratch_all_fee_band_mult": 0.6,
+      "scratch_all_winner_guard_fee_mult": 0.8
+    },
+    "reversal_take_enabled": true,
+    "reversal_take_min_rr": 0.9,
+    "reversal_take_pullback_r": 0.55,
+    "disable_time_stop_when_negative": true
+  },
+  "fee_rate": 0.0004,
+  "execution": {
+    "slippage_cushion_pct": 0.0005,
+    "breakeven_buffer_mult": 1.4
+  },
+  "slippage_pct": 0.0005,
+  "scan_interval_seconds": 8,
+  "portfolio_caps": {
+    "max_total_positions": 12,
+    "max_alt_positions": 5,
+    "max_entries_per_scan": 6,
+    "min_entry_spacing_s": 0,
+    "symbol_cooldown_s": 25,
+    "notes": "Aggressive live-like pacing: per-symbol one open position; high trade frequency; small spacing."
+  },
+  "min_confidence": 0.62,
+  "rr_min": 1.35,
+  "cost_gate_reward_mult": 1.35,
+  "cost_gate_risk_mult": 1.0,
+  "swing_stop_buffer_atr": 0.28,
+  "swing_stop_buffer_px_pct": 0.0007,
+  "swing_stop_max_risk_mult": 1.35,
+  "pullback_ma20_dev_max": 0.0042,
+  "breakout_tp_range_mult": 0.75,
+  "follower_size_mult_unclear": 0.55,
+  "follower_size_mult_contra": 0.55,
+  "allow_range_mode": true,
+  "allow_follower_when_btc_unclear": true,
+  "allow_contra_followers_in_range": true,
+  "performance_guard": {
+    "window_trades": 35,
+    "trip_winrate_below": 0.38,
+    "trip_profit_factor_below": 0.95,
+    "cooldown_seconds": 240,
+    "risk_scale_on_trip": 0.5,
+    "min_conf_add_on_trip": 0.05
+  },
+  "min_volatility": 0.00055,
+  "pullback": {
+    "confirm_enabled": true,
+    "confirm_break_pct": 8e-05,
+    "ma20_dev_max": 0.0026,
+    "touch_buffer_atr": 0.15
+  },
+  "loss_brake": {
+    "enabled": true,
+    "trigger_early_invalidation_streak": 2,
+    "duration_minutes": 10,
+    "risk_scale": 0.72,
+    "relax_after_win_scale": 0.85,
+    "min_conf_bump": 0.03,
+    "min_conf_bump_cap": 0.08
+  },
+  "contra_btc_strength_max": 0.48,
+  "follower_unclear_high_conf": 0.62,
+  "rescue": {
+    "scratch_all_strict": true,
+    "scratch_min_age_sec": 60,
+    "scratch_all_abs_band_cost_mult": 0.35,
+    "scratch_all_min_positions": 2
+  },
+  "profit_harvester": {
+    "tp1_r": 1.0,
+    "tp2_r": 2.0,
+    "tp1_close_pct": 0.45,
+    "be_buffer_r": 0.12,
+    "trail_atr_mult": 2.2
+  },
+  "stop_hunt_defense": {
+    "arm_minutes": 1.2,
+    "extra_atr": 0.25
+  },
+  "exit": {
+    "min_close_profit_net_usdt": 2.0,
+    "tp1_rr": 1.1,
+    "tp1_close_pct": 0.3,
+    "breakeven_rr": 1.4,
+    "trailing_start_rr": 1.6,
+    "time_stop_trend_min": 28,
+    "time_stop_sideway_min": 18,
+    "time_stop_rr_min": 0.55,
+    "disable_time_stop_when_negative": true,
+    "reversal_take_enabled": true,
+    "reversal_take_min_rr": 0.9,
+    "reversal_take_pullback_r": 0.55
+  }
+}
